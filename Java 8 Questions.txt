@@ -1,0 +1,125 @@
+Java 8 Questions
+----------------
+
+
+String reverse without using reverse() method with streams
+"Cap gemini" to "pac inimeg" with streams
+print even numbers from Integer array with streams
+remove duplicate string in a list with streams
+
+
+
+
+Employee List: give the employee with highest salary for each department
+Employee[] arrayOfEmps = {
+                new Employee(1, "Jeff Bezos", 100000, "PM"), 
+                new Employee(2, "Bill Gates", 200000, "PM"), 
+                new Employee(3, "Mark Zuckerberg", 800000,"IT"),       
+                              new Employee(4, "Sundar Pichai", 1000000,"IT")}
+STREAM API	 
+12	[121,345,213,214,539] Use Stream API. filter values with multiple of 5 in them and find the sum of filtered values
+ 	 
+13	Write a simple Functional Interface that will take 2 integers and return sum of integers.
+ 	 
+14	i/p = Array of {"Jeff", "Bill", "Mark","Markus","Daniel"}
+o/p sorted list of names having length more than 5 - {"Markus", "Daniel"}
+ 	 
+15	Given coordinates of a source point (x1, y1) determine if it is possible to reach the destination point (x2, y2). From any point (x, y) there only two types of valid movements: 
+(x, x + y) and (x + y, y). Return a boolean true if it is possible else return false. 
+Note: All coordinates are positive.
+ 	 
+16	Original string: 
+abcdefabcdeabcdaaa 
+remove char from given string :   "a" 
+o/p string: 
+bcdefbcdebcd
+ 	 
+17	Given list of employee having id , name , deptname .Count no of employee in each dept using streamAPI
+ 	 
+18	Given list of employee having id , name , deptname .Count sum of salaries of the employees in each dept using streamAPI
+Core Java	 
+19	Given a threshold find the prime number , Print the prime numbers above the given threshold
+ 	 
+ 	// Method to check if a number is prime
+    public static boolean isPrime(int number) {
+        if (number <= 1) {
+             return false;
+        }
+        for (int i = 2; i <= Math.sqrt(number); i++) {
+            if (number % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+ 	 
+20	Given i/p = "Welcome to my world of Dreams". Place a $ sign at the start of everyword in the sentence: o/p = "$Welcome $to $my $world $of $Dreams"
+21	How to solve it using streams
+22	Write a JUNIT Test method to check if the input array has - allmatched even numbers,
+anymatched oneEven, noneMatched odd numbers
+ 	 
+ 	 
+23	Write a Java program to create a new string repeating every character twice of a given string.
+ Input:
+ The given string is: welcome 
+ Sample Output:  
+ The new string is: wweellccoommee
+ 	 
+24	Using Streams API  find the sum of List of numbers
+ 	 
+25	What are Predicates? Write a Predicate to check a list of numbers and print the even numbers
+ 	 
+26	Write a function using StreamsAPI to find the total age of Persons whose names start with letter 'M'
+Arrays.asList(
+            new Person("Mary", 30),
+            new Person("Bob", 25),
+            new Person("Mathew", 45),
+            new Person("Angela", 35),
+            new Person("Charlie", 40)
+        );
+
+--------------------------------------------JAVA 1.8 (Intermediate) coding Questions ----------------------------------------------------------------------
+ 
+Q1) Given a list of integers, find out all the even numbers exist in the list using Stream functions? list=[2,34,678,3]
+Q2) Given a list of integers, find out all the numbers starting with 1 using Stream functions?
+Q3) How to find duplicate elements in a given integers list in java using Stream functions?
+Q4) Given the list of integers, find the first element of the list using Stream functions?
+Q5) Given a list of integers, find the total number of elements present in the list using Stream functions?
+Q6) Given a list of integers, find the maximum value element present in it using Stream functions?
+Q7) Given a String, find the first non-repeated character in it using Stream functions?
+Q8) Given a String, find the first repeated character in it using Stream functions?
+Q9) Given a list of integers, sort all the values present in it using Stream functions?
+Q8) Given a String, find the first repeated character in it using Stream functions?
+Q9) Given a list of integers, sort all the values present in it using Stream functions?
+Q10) Given a list of integers, sort all the values present in it in descending order using Stream functions?
+Q11) Write a Java 8 program to concatenate two Streams?
+Q12 ) Write a Java 8 program to find the number of Strings in a list whose length is greater
+than 5?
+Q13) Explain StringJoiner Class in Java 8? How can we achieve joining multiple Strings
+using StringJoiner Class?
+Q14)Find the Word/number got repeated by using Stream api
+   input:2,3,34,,5,5,4,3,3,3 
+   output:2-1,3-4,34-1,5-2,4-1
+15) Write a Java Lambda Expression to Create Thread 
+16) How Lambda Expression and Functional Interfaces are Related?
+17)Given a list of Strings .sConvert String to uppercase and Join them with coma (,) using Stream api
+List=["USA", "Japan", "France", "Germany", "Italy", "U.K.","Canada"]
+18)Given a list of Integer find square of all distinct numbers By using stream api
+  list=[9, 10, 3, 4, 7, 3, 4]
+19)Given a List of Integers find total count, min, max, sum, and the average for numbers by using Stream api
+input  :list=[2, 3, 5, 7, 11, 13, 17, 19, 23, 29] 
+output: count=10, sum=129, min=2, average=12.900000, max=29
+
+
+
+
+
+
+
+
+
+
+
+
+
+

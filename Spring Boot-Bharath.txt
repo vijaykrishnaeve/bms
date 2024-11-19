@@ -1,0 +1,155 @@
+Spring Boot-Bharath
+-------------------
+
+
+
+@SpringBootTest 	--> will search for @SpringBootApplication class and ask to create all the required beans and place into container to use them in our test class, so that we can access those beans by autowiring in our test class.
+
+@Repository(Stereo type) --> the classes which holds the database access related code we use this annotation
+@Service(Stereo type)
+
+public interface StudentRepository extends JpaRepository<Student, Long>{
+
+}
+
+repository.save(student) --> if the student with id primary key exists then will update the row(by select query to DB) or it will create a new one.
+-->spring.jpa.show-sql=true
+
+
+----------------creating spring resful services-----------------
+@RestController
+@RequestMapping("/products") 
+public ControllerClass{
+}
+
+at Method level --> @RequestMapping(value ="/products/{id}", method =RequestMethod.GET) or @GetMapping 
+public Product getProductById(@PathVariable("id") int id){
+}
+
+
+public Product createProduct(@RequestBody Product prod){	--> @RequestBody automatically deserialize the incoming param to Object
+}
+
+configure datasource ---> application.properties --> spring.datasource.url = jdbc:mysql://localhost:3306/myDB
+			   spring.datasource.username=root
+			   spring.datasource.password=test
+
+
+
+-->To run the whole application in outside the eclipse goto--> run configurations--> maven install--> then jar file will be created inside target folder inside our spring boot application. --> goto the target path java -jar target/productsapi-o.0.1-snapshot.jar
+inside our spring boot application. --> goto the target path java -jar target/productsapi-o.0.1-snapshot.jar --debug
+
+
+--------------------------------
+If we want to exclude some of the spring autoconfiguration things then goto -> @SpringBootApplication
+@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+--------------------------------
+setting context path to an application --> localhost:8080/products
+application.properties --> server.servlet.context.path=/productapi/ --> /localhost:8080/productsapi/products/
+
+---------------------------------
+
+how to disable embedded tomcat server to launch application
+pom.xml --> in the spring-boot-starter-web --> <exclusions> 
+							<exclusion>
+								<groupId> org.springframework.boot</groupId>
+								<artifactId> spring-boot-starter-tomcat</artifactId>
+
+							</exclusion>
+and now we can add the dependency for server whichever we need jetty or undertow
+
+
+---------------- Rest Client -----------------
+
+
+Spring-Web RestTemplate --> 	GET --> getForObject
+	       			POST --> postForObject
+				PUt --> put
+
+RestTemplate template = new RestTemplate();
+Product prod = template.getForObject("http://localhost:8080/productsapi/products/1",Product.class);
+
+--------------------Spring boot Profiles--------------
+
+To duplicate and configure DB properties and URL's in the different environments, in the application.properties    and 
+											 application-dev.properties
+to get the properties value of the URL  --> @Value("${productapi.service.url}")
+
+1) activate profile from application.properties
+	spring.profiles.active = dev
+2) activate profiles from VM 
+	runAs --> runConfigurations --> arguments --> -Dspring.profiles.active=dev
+							
+
+--------------------ThymeLeaf---------------------
+
+Add the thymeleaf and spring wen dependencies to the project
+Now create a controller in the project 
+@Controller
+public class HelloController{
+	
+	@RequestMapping("/hello")
+	public String hello(){
+	return "hello";		now we need to create hello.html template as it is returning hello;
+	}
+}
+
+goto --> src/main/resources --> templates --> hello.html
+
+	<html>
+		<body>
+			<b> Hello ThymeLeaf </b>
+		</body>
+	</html>
+
+
+--> @{URL} 	--> @{css/myCssTemplate.css}
+--> ${el}	--> ModelMap			-->el is expression language --> this syntax is to read all the data from the controller --> controller will send the model map with all the data that we can read --> ex: @{name}
+--> *{property name} --> used in HTML forms to bind model property to the form field in html.--> ex: <input type="text" th:field= *{studentName}from model object .
+
+@RequestMapping("/sendData")
+	public ModelAndView sendData(){
+	ModelAndView mav =  new ModelAndView("data");
+	mav.addObject("message", "Take One Idea and make it up");	// simple text
+	mav.addObject("student", new Student(1,"Vijay",1000));		// sending object data
+	return	mav;
+}
+
+templates--> create new data.html --> 
+		<html xmlns: th="http://www.thymeleaf.org">		name space to use the thymeleaf
+			<head>
+				<title> Data Renderer</title>
+			</head>
+			<body> 	
+				<dev th:text="${message}"> </dev>	--> the message we can get from model object from the above java method.
+
+				Name : <b th: text="${student.name}"> </b>
+				Score: <b th: text="${student.score}"> </b>
+			</body>
+		</html>
+
+without restart the server if we changed any code in the HTML files, those will not be reflected in the browser. because thymeleaf is cacheing the entire html files and rendering the same files. If we want dynamic changes to be loaded from HTML files without restart use the below in application.properties
+--> spring.thymeleaf.cache=false  --> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,128 @@
+Hibernate -----------------
+
+-----------------Spring JDBC------------------
+
+Object Relational Impedence mismatch or paradigm mismatch
+
+-->spring.h2.console.enabled =true
+-->spring.jpa.properties.hinernate.generate_statistics=true
+-->logging.level.org.hibernate.stat=debug
+
+-->logging.level.org.hibernate.type=trace	// trace will give the values which are passed in queries to DB
+-->spring.jpa.show-sql=true
+-->spring.jpa.properties.hinernate.formate_sql=true
+
+
+src/main/resources --> data.sql
+jdbcTemplate.query("select *from person", new BeanPropertyRowMapper(Person.class));	// when the DB properties exactly match
+--> Spring boot application --> implements CommandLineRunner --> @Override method public void run(String ... args) throws Exception{
+													dao.findAll(); // will trigger above query;
+													}
+jdbcTemplate.queryForObject("select *from person where id=?", new Object[]{id},  new BeanPropertyRowMapper(Person.class));
+jdbcTemplate.update("delete from person where id =?", new Object[]{id});
+jdbcTemplate.update("insert into person (id,name,location,birth_date) values(?,?,?,?) ", new Object[] {person.getId(),person.getName()...});
+jdbcTemplate.update("update person set name=?, location=?, birth_date=? where id=? ")
+
+class PersonRwoMapper implements RowMapper<Person>{			// our own row mapper to match the unmatched database table fields
+	@override
+	public Person mapRow(ResultSet rs, int rowNum) throws SQLException{
+		Person person = new Person();
+		person.setId(rs.getInt("id"));
+		person.setBirthDate(rs.getTimestamp("birth_date"));
+		return person;
+	}
+}
+
+------------------Spring JPA(Hibernate)------------------------------
+@Entity
+@Table(name ="person")
+@Column(name ="person_name")
+@Id
+@GeneratedValue
+
+@Repository
+@Transactional				--> while modifying DB we required all the actions to be fine then only execute.
+public class PersonJpaDaoRepository{
+
+@PersistenceContext
+EntityManager entityManager;
+	public Person findById(int id){
+		return entityManager.find(Person.class, id);
+	}
+}
+
+--> once we are using entityManager, we are not required to use data.sql to create table, but we can insert data in data.sql.
+application.properties --> spring.jpa.show-sql=true
+entityManager.merge(person); --> merge, if the id of person is already existed in DB it will update with person details or else it will insert
+entityManager.remove(person);
+--> TypedQuery<Person> namedQuery = entityManager.createNamedQuery("find_all_persons", Person.class);
+	namedQuery.getResultsList();
+--> at the bean person level we need to use the above named query name 
+
+ @NamedQuery(name = "find_all_persons", query = "select p from Person p")	// JPQL will use the entity beans and not the database tables
+ public class Person{
+
+ }
+
+
+
+
+----------------------------
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = DemoApplication.class)   // will launch spring boot context which we want to launch
+public class CourseRepositoryTest{
+	EntityManager em;
+	public Course save(Course course){
+	if(course.getId() == null){
+	em.persist(course);
+	}else{
+	em.merge(course);
+	     }
+	}
+}
+
+ 	@Test
+	@DirtiesContext		// after we modify any data in DB, spring will revert all that transactions if we use this
+	public void findById(){
+		//to find the record
+		Course course = repository.findById(10001L);
+		assertEquals("JPA in 50 steps", course.getName());
+		// to remove the record
+		repository.removeById(10002L);
+		Course course = repository.findById(10002L);
+		assertNull(repository.findById(10002L));
+	}
+}
+
+
+
+
+public void playWithEntityManager(){
+	entityManager.flush();		// till the changes are saved to database
+	entityManager.detatch(course2);	or entityManager.clear();// course2 details no longer track and updated by entity manager
+	entityManager.refresh(course1); entityManager will get the DB record instead the updates happened in the code track for course1	
+}
+
+
+-------------------JSQL-------------------
+List results = entityManager.createQuery("select c from Course c where name like '%100 steps'").getResultList();
+
+TypedQuery query = entityManager.createQuery("select c from Course c", Course.class).
+List<Course results = query.getResultList();
+
+@Column(name="fullname", nullable=false)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
