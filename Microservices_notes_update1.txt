@@ -1,0 +1,234 @@
+OpenFeign -> using open feign we can call our microservices or third parth api services like WebClient but in a declarative way
+pom.xml ---> spring-cloud-starter-openfeign
+@EnableFeignClients("com.package of feign client") at the SpringBootApplication starting
+
+@FeignClient(url="${address.service.url}", value="addres-feignclient", path ="/api/address")
+public interface FeignClientClass{
+
+	@GetMapping(/getById/{id})
+	public AddressResponse getById(@PathVariable long id);
+}
+-------------------------------Eureka---------------------------------------
+
+Eureka server  --> it is a spring boot application, if one microservice is called by many other services if we change that microservice URL it will be 				effected by all calling microservices, in this case we register our microservices with Eureka.
+pom.xml ---> spring-cloud-starter-netflix-eureka-server
+application.properties of eureka --> server.port = 8761
+				     spring.application.name = eureka-server
+				     eureka.client.register-with-eureka =false 
+				     eureka.client.fetch-registry=false
+@EnableEurekaServer at eureka server appliceatui
+pom.xml of our microservices --> spring-cloud-starter-netflix-eureka-client
+@EnableEurekaClient at our microservices, it will tells that this microservice need to register with Eureka, but which Eureka means goto application.props
+application.properties  -->  eureka.client.serviceUrl.defaultZone = http://localhost:8761/eureka
+
+Once we are using Eureka we no need to call the URL for the Feign client instead we use name of the application which is registered at Eureka(address application name in this case),
+
+@FeignClient(value="address-service", path ="/api/address")
+public interface FeignClientClass{
+
+	@GetMapping(/getById/{id})
+	public AddressResponse getById(@PathVariable long id);
+}
+
+
+
+--------------------------Spring Load Balancer( Client side )----------------------------------------
+In the latest spring boot application the load balancer is available inside the naming server. And Load balancer also comes with Api_Gateway, so below code is optional
+But in 2.X version the load balancer we need to add in pom.xml as below
+
+pom.xml --> spring-cloud-starter-loadbalancer
+create a class annotated with loadbalancer
+
+@LoadBalancerClient(value ="address-service") --> same name as registered with Eureka
+public class AddrServiceLoadBalancer{
+
+// at the time of Feign client creating we nee to configure load balancing, so
+
+	@LoadBalanced
+	@Bean
+	public Feign.Builder feignBuilder(){
+	 return Feign.builder();
+	}
+}
+
+
+
+
+---------------Spring Cloud API Gateway--------------------------
+
+Client/Consumer will call the api gateway with the service-name of the microservices which he wants, and the request passes from api gateway to Eureka to microservices.
+
+Pre-filter(before api gateway routes the request to the appopriate microservice) and Post filter(before api gateway gives response back to the Client)
+--> add the dependenciew api-gateway and Eureka to route through the Eureka
+@EnableEurekaClient at the api-gateway application
+application.properties --> eureka.client.service-url.defaultZone = http://localhost:8761/eureka
+--> discovery location for api-gateway application to rigister with Eureka --> spring.cloud.gateway.discover.locator.enabled=true
+spring.cloud.gateway.discover.locator.lower-case-serviceid=true  (Instead giving lower case Eureka showing service name in upper case, to tell to get the lower case microservices to api-gateway)
+
+@Configuration
+public class CustomFilter implements GlobalFilter {
+
+	@Override
+  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain){
+		ServerHttpRequest request = exchange.getRequest();
+		logger.info("Authorization "+request.getHeaders().getFirst("Authorization") );
+		// after authorization if we want to write specific functionality for specific api then we can use below if condition
+		if(request.getUri().toString().contains(/api/student)){
+			
+		}
+		return chain.filter(exchange).then(Mono.fromRunnable() -> {
+				ServerHttpResponse response= exchange.getResponse();
+				Logger.logInfo("Post Filter"+response.getStatusCode()) --> or we can give our own response status also here based on 							requirement.
+
+			}						
+			);
+
+ 	}
+}
+
+** above code is to call the api-gateway once when client calls, but if we want our microservices interactions also with the help of Api_gateway then we need little changes at our Feign client router class as follows,
+
+
+
+@FeignClient(value="api-gateway") --> name of api-gateway
+public interface FeignClientClass{		// now this Feign is calling the microservices through api-gateway, and no path specific at class level;
+
+	@GetMapping(address-service/api/address/getById/{id})
+	public AddressResponse getById(@PathVariable long id);
+}
+
+
+
+In28Minutes-----------------------Custom routes with api-gateway
+
+@Configuration
+public class ApiGatewayConfiguration{
+ 	@Bean
+	public RouteLocator gatewayRouter(RouteLocatorBuilder builder){
+		Function<PredicateSpec, Buildable<Route>> routeFunction = p -> p.path("/get")	//if pathe contains /get then route to below URI
+										.filters(f -> f.addRequestHeader("MyHeader", "My response Param")
+												.addRequestParameter("MyReqParam", "MyParam"))
+										.uri("http://httpbin.org.80");	// URL to our microservices
+		routeFunction.route(p -> p.path("/currency-exchange/**"))		   	// if any request starts with /currency-exchange to gateway
+					  .uri("lb://currency-exchange").route...etc;		// route that request with load-balance and name inside 															Eureka like CURRENCY-EXCHANGE
+					  .uri("currency-exchange-new/**")
+					  .filters(f -> f.rewritePath("currency-exchange-new/(?<segment>.*)", "currency-exchange-feign/$(segment)"))
+					  .uri("lb://currency-exchange")
+				**	in the we are replacing the request URL new to the already existing services 
+		return builder.routes().route(routeFunction).build();
+	}
+}
+
+
+
+
+
+------------------------Spring cloud Config server-----------------------------
+--> install git --> and create a folder for our microservices properties and create a properties file as our microservice name 
+git bash here --> git init --> git add . --> git commit -m "commit message"
+--> pom.xml --> spring-config-server
+	    --> Eureka discovery client
+@EnableConfigServer at application
+@EnableEurekaClient at application
+--> server.port = 8888
+--> server.application.name = config-server
+--> spring.cloud.config.server.git.uri = d://file-location/
+--> eureka.client.service-url.defaultZone = http://localhost:8761/eureka
+after configuration check the config server with URL
+--> localhost://8888/address-service/default		--> address-service is a profile name here
+
+
+
+
+--------------------------------Docker---------------------------
+--> Below are the commands to Docker Images which are already created.-----------------------
+
+docker run in28mins/todo-api.1.0.1.Release
+--> hub.docker.com --> is a registry contains lot of repositories
+to access the above running application in chrome
+
+--> docker run -p{HostPort}:{container port} in28mins/todo-api.1.0.1.Release
+--> docker run -p6000:5000 in28mins/todo-api.1.0.1.Release
+http://localhost:6000/hello-world
+
+--> docker run -p6000:5000 -d in28mins/todo-api.1.0.1.Release --> -d means detatch from container from stopping the running
+--> docker logs {id}  which is generated from above cmd
+--> docker logs -f {id}				--> to keep on logs to see or tailing logs
+	press ctrl+c to stop tailing logs
+--> docker container ls --> to know about container details
+--> docker images 	--> to know all the images in local, not from docker registry
+--> docker container ls -a -->which are all running containers and which are exit.
+--> docker container stop {ID}
+--> docker tag in28mins/todo-api.0.0.0.Release in28mins/todo-api.0.0.0.Release latest_tag --> we can give tag 
+--> docker pull mysql
+--> docker images
+--> docker image history{image_id} or docker image inspect {image_id}
+--> docker container pause{id}
+--> docker container prune  --> remove all stopped containers from history
+--> docker container stop{id}
+--> docker container kill{id}		--> without any logs
+--> docker run -p6000:5000 -d restart=always in28mins/todo-api.1.0.1.Release	--> container will automatically restarts whenever relunch the docker
+--> docker events		--> to continuously monitor all the events of all docker containers which are running
+--> docker stats		--> returns the statistics of current running docker containers
+--> docker run -p 6000:5000 -d restart=always -m 512m --cpu-quota 5000  in28mins/todo-api.1.0.1.Release --> 5000 is checking from 100,000 of cpu memory
+--> docker system df 						->what docker Deamon manages
+
+
+
+
+
+
+
+docker client and docker server will be available once we install, docker cli commands will be followed by docker server. And docker server will contains the docker images, and based on instructions running containers will be created in docker server in our system firstly.
+
+pom.xml --> <packaging> jar </packaging> 	// to enable for docker to create a jar
+
+cmd --> pwd --> present working directory
+cmd --> mvn -version
+cmd --> mvn clean install		// will get the pom.xml so we need to go to the folder path of pom.xml and try this command
+with the above command a fat jar(with all the dependencies and with tomcat, but not with Java libraries) will be created inside the target folder of our application)
+the above jar file name will be created from pom.xml artifactID and version.
+cmd --> mvn spring-boot:run  --> will look for the artifactId and version name of a jar in target folder.
+
+---------------using Java commands instead of Maven commands inside command line-------------
+cmd --> java -jar tgarget/accounts-0.0.1-SNAPSHOT.jar
+
+
+-------------------------Creating a DockerFile --------------------------
+create Dockerfile without extension in target folder 
+
+//start a base image containing Java runtime mentioned
+--> FROM OpenJDK:17-jdk-slim
+//Information of who is maintaining the image
+-->MANTAINER eazybyte.com
+//add the applications jars to the image
+--> COPY target/accounts-0.0.1-SNAPSHOT.jar accounts-0.0.1-SNAPSHOT.jar // get the jar from target folder and create with same file name in server
+// execute the application
+ENTRYPOINT["java", "-jar", "accounts-0.0.1-SNAPSHOT.JAR"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
