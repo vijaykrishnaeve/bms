@@ -1,0 +1,362 @@
+I am a senior software engineer specializing in backend development. With a strong background in Java technology and seven+ years of experience, and has successfully built scalable and efficient solutions for complex technical challenges.I am well-versed in various programming technologies and frameworks like Java, Springboot, JPA and Mocroservices. In my spare time, I enjoys reading science fiction novels and travelling to Pilgrimage sites.
+
+
+
+
+Questions ---------------
+
+
+delete the all the dependents in jpa how ?
+
+
+Fail-fast and Fail-safe
+
+data structure in hashmap in java
+
+how design patterns in microservices building
+
+
+select particular columns in jpa how
+
+
+how to disable H2 database and use jetty in the spring boot
+we have to add exclusion tag inside the web starter dependency...
+
+aggregation and composition
+aggregation is a object dependency in tightly coupled, and composition is by using extends key word and inherit the properties loose coupling.
+
+
+@table and @entity difference
+@Entity <-- this is an entity class that you will work with
+@Table(name = "widget") <-- and this is a corresponding table that matches that entity in the database
+
+
+
+ String input = "Hello, World!";
+        String reversed = new StringBuilder(input)
+            .chars()
+            .mapToObj(c -> (char) c)
+            .collect(Collectors.collectingAndThen(Collectors.toList(), lst -> {
+                java.util.Collections.reverse(lst);
+                return lst.stream();
+            }))
+            .map(String::valueOf)
+            .collect(Collectors.joining());
+
+
+
+
+how to make class as Singleton
+Declaring all constructors of the class to be private.
+Providing a static method that returns a reference to the instance.
+
+
+Demonstrate thread safety
+ synchronized void sum(int n)
+    {
+         Thread t = Thread.currentThread();
+        for (int i = 1; i <= 5; i++) {
+            System.out.println(
+                t.getName() + " : " + (n + i));
+        }
+    }
+
+create child classe of thread and override run() method and call sum method.
+
+
+difference between @Controller and @RestController
+In Spring, incoming requests are handled by a handler method inside a @Controller annotated class. Usually, the dispatcher servlet is responsible for identifying the controller and appropriate request handler method inside the controller by URL matching.
+As the name suggests, @RestController is used in the case of REST style controllers i.e. handler methods shall return the JSON/XML response directly to the client rather than using view resolvers. The @RestController is a convenience annotation that combines the @Controller and @ResponseBody annotations.
+
+
+
+
+
+
+------------------------------------Notes---------------------------------------
+
+
+
+
+
+
+Wraps commands with the necessary spring prefix
+spring shell
+
+To compile and run the application
+$ spring run hello.groovy
+
+
+To run the spring boot application in the specified server
+$ spring run myapp.groovy -- --server.port=8081
+
+To compile all of the files
+$ spring run *.groovy
+
+Use to test the application and run
+$ spring test test.groovy
+
+The grab command will download all the Spring Groovy scripts and Java dependencies to the ./repository
+$ spring grab MyApplication.java
+
+The install command is very similar to the grab command; the only difference is that you need to specify the library you want to install
+$ spring install org.spockframework:spock-core:1.0-groovy-2.4
+
+The jar command will create a self-contained executable JAR file from a Groovy or Java script.
+$ spring jar myapp.jar app.groovy
+
+
+A fat JAR that can be executed with the following
+$ java -jar myapp.jar
+
+The war command will create a self-contained executable WAR file from a Groovy or Java script
+$ spring war app.war app.groovy
+
+
+The uninstall command will uninstall the dependencies from the lib directory
+$ spring uninstall org.spockframework:spock-core:1.0-groovy-2.4
+
+
+The init command will help you initialize a new project by using the Spring Initializr
+spring init [options] [location] 
+
+
+
+
+
+===================================================================
+
+
+
+
+
+
+
+@EnableCashing
+we should implement serializable to work with cache
+@cacheable
+@transactional(readOnly=true) for get methods
+
+@cacheEvict("product-cache") if we want to remove obj from cache
+
+We can add the log levels TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF in application.properties
+
+
+
+@JMSListener
+@EnableJms
+spring.jms.pub-sub-domain=true to enable topic instead of queue
+
+
+public class MyUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+  public void uncaughtException(Thread t, Throwable e) {
+     // Write the custom logic here
+   }
+}
+
+
+
+management.endpoint.metrics.enabled=true
+management.endpoints.web.exposure.include=metrics,info
+management.endpoints.web.exposure.exclude=info
+management.endpoints.jmx.exposure.include=health,info
+
+
+
+
+
+
+
+
+
+================================================================================
+
+
+
+
+
+
+
+
+difference between Hashset and Hashmap
+internal implementation Hashmap
+
+
+peek(Consumer<? super T> action)	it returns a stream and is a intermediate operation
+forEach(Consumer<super T>action)  	it doesn't returns a stream and is a terminal operation
+filter(Predicate<? super T> predicate)
+map(Function<? super T, ? extends R> mapper)
+flatMap(Function<? super T, ? extends Stream<? extends R>> mapper)
+sorted(Comparator<? super T> comparator)
+
+reduce (0, BinaryOperator(T,T,T))		BinaryOperator is extends the BiFinction<T,T,T>.
+
+reduce(BinaryOperator(T,T,T))			It returns Optional if we didnot mention Identity value.
+
+Optional<Person> returnedAge= streamOfPersons.filter(i -> i.getAge() >= 20).min(Comparator.comparing(Person :: getAge));
+
+
+
+List<Integer> evenNumbers = numbers.stream().
+                                     filter(o -> o % 2 == 0).
+                                      collect(Collectors.toList());
+
+
+List<String> distinctItems = list.stream()
+                                    .distinct()
+                                    .collect(Collectors.toList());
+
+
+
+import java.util.stream.Collectors;
+
+public class ReverseString {
+
+    public static String reverse(String str) {
+        return IntStream.range(0, str.length())
+                .mapToObj(i -> str.charAt(str.length() - i - 1))
+                .collect(Collectors.joining());
+    }
+
+
+ public static String reverse(String str) {
+        return IntStream.range(0, str.length())
+                .mapToObj(i -> str.charAt(str.length() - i - 1))
+                .reduce("", String::concat, (s1, s2) -> s2 + s1);
+    }
+
+}
+
+
+
+
+
+
+-------------------------------Java 8 questions--------------------------------------
+
+
+Java 8 Questions
+----------------
+
+
+String reverse without using reverse() method with streams
+"Cap gemini" to "pac inimeg" with streams
+print even numbers from Integer array with streams
+remove duplicate string in a list with streams
+
+
+
+
+Employee List: give the employee with highest salary for each department
+Employee[] arrayOfEmps = {
+                new Employee(1, "Jeff Bezos", 100000, "PM"), 
+                new Employee(2, "Bill Gates", 200000, "PM"), 
+                new Employee(3, "Mark Zuckerberg", 800000,"IT"),       
+                              new Employee(4, "Sundar Pichai", 1000000,"IT")}
+STREAM API	 
+12	[121,345,213,214,539] Use Stream API. filter values with multiple of 5 in them and find the sum of filtered values
+ 	 
+13	Write a simple Functional Interface that will take 2 integers and return sum of integers.
+ 	 
+14	i/p = Array of {"Jeff", "Bill", "Mark","Markus","Daniel"}
+o/p sorted list of names having length more than 5 - {"Markus", "Daniel"}
+ 	 
+15	Given coordinates of a source point (x1, y1) determine if it is possible to reach the destination point (x2, y2). From any point (x, y) there only two types of valid movements: 
+(x, x + y) and (x + y, y). Return a boolean true if it is possible else return false. 
+Note: All coordinates are positive.
+ 	 
+16	Original string: 
+abcdefabcdeabcdaaa 
+remove char from given string :   "a" 
+o/p string: 
+bcdefbcdebcd
+ 	 
+17	Given list of employee having id , name , deptname .Count no of employee in each dept using streamAPI
+ 	 
+18	Given list of employee having id , name , deptname .Count sum of salaries of the employees in each dept using streamAPI
+Core Java	 
+19	Given a threshold find the prime number , Print the prime numbers above the given threshold
+ 	 
+ 	// Method to check if a number is prime
+    public static boolean isPrime(int number) {
+        if (number <= 1) {
+             return false;
+        }
+        for (int i = 2; i <= Math.sqrt(number); i++) {
+            if (number % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+ 	 
+20	Given i/p = "Welcome to my world of Dreams". Place a $ sign at the start of everyword in the sentence: o/p = "$Welcome $to $my $world $of $Dreams"
+21	How to solve it using streams
+22	Write a JUNIT Test method to check if the input array has - allmatched even numbers,
+anymatched oneEven, noneMatched odd numbers
+ 	 
+ 	 
+23	Write a Java program to create a new string repeating every character twice of a given string.
+ Input:
+ The given string is: welcome 
+ Sample Output:  
+ The new string is: wweellccoommee
+ 	 
+24	Using Streams API  find the sum of List of numbers
+ 	 
+25	What are Predicates? Write a Predicate to check a list of numbers and print the even numbers
+ 	 
+26	Write a function using StreamsAPI to find the total age of Persons whose names start with letter 'M'
+Arrays.asList(
+            new Person("Mary", 30),
+            new Person("Bob", 25),
+            new Person("Mathew", 45),
+            new Person("Angela", 35),
+            new Person("Charlie", 40)
+        );
+
+--------------------------------------------JAVA 1.8 (Intermediate) coding Questions ----------------------------------------------------------------------
+ 
+Q1) Given a list of integers, find out all the even numbers exist in the list using Stream functions? list=[2,34,678,3]
+Q2) Given a list of integers, find out all the numbers starting with 1 using Stream functions?
+Q3) How to find duplicate elements in a given integers list in java using Stream functions?
+Q4) Given the list of integers, find the first element of the list using Stream functions?
+Q5) Given a list of integers, find the total number of elements present in the list using Stream functions?
+Q6) Given a list of integers, find the maximum value element present in it using Stream functions?
+Q7) Given a String, find the first non-repeated character in it using Stream functions?
+Q8) Given a String, find the first repeated character in it using Stream functions?
+Q9) Given a list of integers, sort all the values present in it using Stream functions?
+Q8) Given a String, find the first repeated character in it using Stream functions?
+Q9) Given a list of integers, sort all the values present in it using Stream functions?
+Q10) Given a list of integers, sort all the values present in it in descending order using Stream functions?
+Q11) Write a Java 8 program to concatenate two Streams?
+Q12 ) Write a Java 8 program to find the number of Strings in a list whose length is greater
+than 5?
+Q13) Explain StringJoiner Class in Java 8? How can we achieve joining multiple Strings
+using StringJoiner Class?
+Q14)Find the Word/number got repeated by using Stream api
+   input:2,3,34,,5,5,4,3,3,3 
+   output:2-1,3-4,34-1,5-2,4-1
+15) Write a Java Lambda Expression to Create Thread 
+16) How Lambda Expression and Functional Interfaces are Related?
+17)Given a list of Strings .sConvert String to uppercase and Join them with coma (,) using Stream api
+List=["USA", "Japan", "France", "Germany", "Italy", "U.K.","Canada"]
+18)Given a list of Integer find square of all distinct numbers By using stream api
+  list=[9, 10, 3, 4, 7, 3, 4]
+19)Given a List of Integers find total count, min, max, sum, and the average for numbers by using Stream api
+input  :list=[2, 3, 5, 7, 11, 13, 17, 19, 23, 29] 
+output: count=10, sum=129, min=2, average=12.900000, max=29
+
+
+
+
+
+
+
+
+
+
+
+
+
+
